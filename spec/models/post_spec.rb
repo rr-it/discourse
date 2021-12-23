@@ -9,22 +9,6 @@ describe Post do
 
   let(:upload_path) { Discourse.store.upload_path }
 
-  describe '#hidden_reasons' do
-    context "verify enum sequence" do
-      before do
-        @hidden_reasons = Post.hidden_reasons
-      end
-
-      it "'flag_threshold_reached' should be at 1st position" do
-        expect(@hidden_reasons[:flag_threshold_reached]).to eq(1)
-      end
-
-      it "'flagged_by_tl3_user' should be at 4th position" do
-        expect(@hidden_reasons[:flagged_by_tl3_user]).to eq(4)
-      end
-    end
-  end
-
   describe '#types' do
     context "verify enum sequence" do
       before do
@@ -1324,7 +1308,7 @@ describe Post do
       hidden_topic = Fabricate(:topic, visible: false)
 
       post = create_post(topic: hidden_topic)
-      post.update_columns(hidden: true, hidden_at: Time.now, hidden_reason_id: 1)
+      post.update_columns(hidden: true, hidden_at: Time.current, hidden_reason: :flag_threshold_reached)
       post.reload
 
       expect(post.hidden).to eq(true)
@@ -1346,7 +1330,7 @@ describe Post do
     create_post(topic: hidden_topic)
     second_post = create_post(topic: hidden_topic)
 
-    second_post.update_columns(hidden: true, hidden_at: Time.now, hidden_reason_id: 1)
+    second_post.update_columns(hidden: true, hidden_at: Time.current, hidden_reason_id: :flag_threshold_reached)
     second_post.expects(:publish_change_to_clients!).with(:acted)
 
     second_post.unhide!

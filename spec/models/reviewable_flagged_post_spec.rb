@@ -309,7 +309,7 @@ RSpec.describe ReviewableFlaggedPost, type: :model do
   describe "#perform_disagree_and_restore" do
     it "notifies the user about the flagged post being restored" do
       reviewable = Fabricate(:reviewable_flagged_post)
-      reviewable.post.update(hidden: true, hidden_at: Time.zone.now, hidden_reason_id: PostActionType.types[:spam])
+      reviewable.post.update(hidden: true, hidden_at: Time.current, hidden_reason: :new_user_spam_threshold_reached)
 
       reviewable.perform(moderator, :disagree_and_restore)
 

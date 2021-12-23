@@ -43,11 +43,10 @@ describe PostCreator do
     end
 
     it "can be created with a hidden reason" do
-      hri = Post.hidden_reasons[:flag_threshold_reached]
-      post = PostCreator.create(user, basic_topic_params.merge(hidden_reason_id: hri))
+      post = PostCreator.create(user, basic_topic_params.merge(hidden_reason_id: :flag_threshold_reached))
       expect(post.hidden).to eq(true)
       expect(post.hidden_at).to be_present
-      expect(post.hidden_reason_id).to eq(hri)
+      expect(post).to be_flag_threshold_reached
       expect(post.topic.visible).to eq(false)
     end
 

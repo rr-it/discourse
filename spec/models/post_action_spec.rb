@@ -597,7 +597,7 @@ describe PostAction do
 
       expect(post.hidden).to eq(true)
       expect(post.hidden_at).to be_present
-      expect(post.hidden_reason_id).to eq(Post.hidden_reasons[:flag_threshold_reached])
+      expect(post).to be_flag_threshold_reached
       expect(post.topic.visible).to eq(false)
 
       post.revise(post.user, raw: post.raw + " ha I edited it ")
@@ -605,7 +605,7 @@ describe PostAction do
       post.reload
 
       expect(post.hidden).to eq(false)
-      expect(post.hidden_reason_id).to eq(Post.hidden_reasons[:flag_threshold_reached]) # keep most recent reason
+      expect(post).to be_flag_threshold_reached # keep most recent reason
       expect(post.hidden_at).to be_present # keep the most recent hidden_at time
       expect(post.topic.visible).to eq(true)
 
@@ -620,7 +620,7 @@ describe PostAction do
 
       expect(post.hidden).to eq(true)
       expect(post.hidden_at).to be_present
-      expect(post.hidden_reason_id).to eq(Post.hidden_reasons[:flag_threshold_reached_again])
+      expect(post).to be_flag_threshold_reached_again
       expect(post.topic.visible).to eq(false)
 
       post.revise(post.user, raw: post.raw + " ha I edited it again ")
@@ -629,7 +629,7 @@ describe PostAction do
 
       expect(post.hidden).to eq(true)
       expect(post.hidden_at).to be_present
-      expect(post.hidden_reason_id).to eq(Post.hidden_reasons[:flag_threshold_reached_again])
+      expect(post).to be_flag_threshold_reached_again
       expect(post.topic.visible).to eq(false)
     end
 
@@ -641,6 +641,7 @@ describe PostAction do
       post.reload
       expect(post.hidden).to eq(true)
     end
+
     it "hide tl0 posts that are flagged as spam by a tl3 user" do
       newuser = Fabricate(:newuser)
       post = create_post(user: newuser)
@@ -653,7 +654,7 @@ describe PostAction do
 
       expect(post.hidden).to eq(true)
       expect(post.hidden_at).to be_present
-      expect(post.hidden_reason_id).to eq(Post.hidden_reasons[:flagged_by_tl3_user])
+      expect(post).to be_flagged_by_tl3_user
     end
 
     it "can flag the topic instead of a post" do

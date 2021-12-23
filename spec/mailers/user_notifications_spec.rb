@@ -244,7 +244,7 @@ describe UserNotifications do
       it "excludes deleted and hidden posts" do
         t = Fabricate(:topic, user: Fabricate(:user), title: "Post objectionable stuff here", created_at: 1.hour.ago)
         deleted = Fabricate(:post, topic: t, score: 100.0, post_number: 2, raw: "This post is uncalled for", deleted_at: 5.minutes.ago, created_at: 1.hour.ago)
-        hidden = Fabricate(:post, topic: t, score: 100.0, post_number: 3, raw: "Try to find this post", hidden: true, hidden_at: 5.minutes.ago, hidden_reason_id: Post.hidden_reasons[:flagged_by_tl3_user], created_at: 1.hour.ago)
+        hidden = Fabricate(:post, topic: t, score: 100.0, post_number: 3, raw: "Try to find this post", hidden: true, hidden_at: 5.minutes.ago, hidden_reason: :flagged_by_tl3_user, created_at: 1.hour.ago)
         user_deleted = Fabricate(:post, topic: t, score: 100.0, post_number: 4, raw: "I regret this post", user_deleted: true, created_at: 1.hour.ago)
         html = subject.html_part.body.to_s
         expect(html).to_not include deleted.raw
