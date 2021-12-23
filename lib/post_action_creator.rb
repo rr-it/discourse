@@ -204,14 +204,14 @@ private
 
       @post.hide!(
         @post_action_type_id,
-        Post.hidden_reasons[:flag_threshold_reached],
+        :flag_threshold_reached,
         custom_message: :queued_by_staff
       )
       return
     end
 
     if trusted_spam_flagger?
-      @post.hide!(@post_action_type_id, Post.hidden_reasons[:flagged_by_tl3_user])
+      @post.hide!(@post_action_type_id, :flagged_by_tl3_user)
       return
     end
 

@@ -478,9 +478,7 @@ class PostRevisor
   end
 
   def editing_a_flagged_and_hidden_post?
-    self_edit? &&
-    @post.hidden &&
-    @post.hidden_reason_id == Post.hidden_reasons[:flag_threshold_reached]
+    self_edit? && @post.hidden? && @post.flag_threshold_reached?
   end
 
   def update_topic

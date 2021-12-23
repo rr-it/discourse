@@ -138,18 +138,19 @@ class Post < ActiveRecord::Base
         )
   }
 
-  delegate :username, to: :user
+  alias_attribute :hidden_reason, :hidden_reason_id
+  enum hidden_reason: {
+    flag_threshold_reached: 1,
+    flag_threshold_reached_again: 2,
+    new_user_spam_threshold_reached: 3,
+    flagged_by_tl3_user: 4,
+    email_spam_header_found: 5,
+    flagged_by_tl4_user: 6,
+    email_authentication_result_header: 7,
+    imported_as_unlisted: 8
+  }
 
-  def self.hidden_reasons
-    @hidden_reasons ||= Enum.new(flag_threshold_reached: 1,
-                                 flag_threshold_reached_again: 2,
-                                 new_user_spam_threshold_reached: 3,
-                                 flagged_by_tl3_user: 4,
-                                 email_spam_header_found: 5,
-                                 flagged_by_tl4_user: 6,
-                                 email_authentication_result_header: 7,
-                                 imported_as_unlisted: 8)
-  end
+  delegate :username, to: :user
 
   def self.types
     @types ||= Enum.new(regular: 1,
@@ -533,16 +534,14 @@ class Post < ActiveRecord::Base
   def hide!(post_action_type_id, reason = nil, custom_message: nil)
     return if hidden?
 
-    reason ||= hidden_at ?
-      Post.hidden_reasons[:flag_threshold_reached_again] :
-      Post.hidden_reasons[:flag_threshold_reached]
+    reason ||= hidden_at ? :flag_threshold_reached_again : :flag_threshold_reached
 
     hiding_again = hidden_at.present?
 
-    self.hidden = true
-    self.hidden_at = Time.zone.now
-    self.hidden_reason_id = reason
-    self.skip_unique_check = true
+    assign_attributes(hidden: true,
+                      hidden_at: Time.current,
+                      hidden_reason: reason,
+                      skip_unique_check: true)
     save!
 
     Topic.where(

@@ -121,7 +121,7 @@ describe PostSerializer do
     end
 
     context "a hidden post" do
-      let(:post) { Fabricate.build(:post, raw: raw, user: user, hidden: true, hidden_reason_id: Post.hidden_reasons[:flag_threshold_reached]) }
+      let(:post) { Fabricate.build(:post, raw: raw, user: user, hidden: true, hidden_reason_id: :flag_threshold_reached) }
 
       it "shows the raw post only if authorized to see it" do
         expect(serialized_post_for_user(nil)[:raw]).to eq(nil)
@@ -181,7 +181,7 @@ describe PostSerializer do
           user: user,
           wiki: true,
           hidden: true,
-          hidden_reason_id: Post.hidden_reasons[:flag_threshold_reached])
+          hidden_reason_id: :flag_threshold_reached)
       }
 
       it "can view edit history only if authorized" do

@@ -65,7 +65,6 @@ class PostSerializer < BasicPostSerializer
              :user_id,
              :draft_sequence,
              :hidden,
-             :hidden_reason_id,
              :trust_level,
              :deleted_at,
              :deleted_by,
@@ -87,6 +86,8 @@ class PostSerializer < BasicPostSerializer
              :reviewable_id,
              :reviewable_score_count,
              :reviewable_score_pending_count
+
+  attribute :hidden_reason_for_database, key: :hidden_reason_id
 
   def initialize(object, opts)
     super(object, opts)
@@ -492,8 +493,8 @@ class PostSerializer < BasicPostSerializer
     object.revisions.size > 0
   end
 
-  def include_hidden_reason_id?
-    object.hidden
+  def include_hidden_reason_for_database?
+    object.hidden?
   end
 
   # If we have a topic view, it has bulk values for the reviewable content we can use
