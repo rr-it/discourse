@@ -135,15 +135,16 @@ module ApplicationHelper
     path
   end
 
-  def preload_script(script)
+  def preload_script(script, defer = true)
     path = script_asset_path(script)
-    preload_script_url(path)
+    preload_script_url(path, defer)
   end
 
-  def preload_script_url(url)
+  def preload_script_url(url, defer = true)
+    defer_attribute = defer ? ' defer' : ''
     <<~HTML.html_safe
       <link rel="preload" href="#{url}" as="script">
-      <script src="#{url}"></script>
+      <script#{defer_attribute} src="#{url}"></script>
     HTML
   end
 
