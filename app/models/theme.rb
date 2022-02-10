@@ -307,7 +307,8 @@ class Theme < ActiveRecord::Base
     return "" if theme_id.blank?
 
     theme_ids = !skip_transformation ? transform_ids(theme_id) : [theme_id]
-    cache_key = "#{theme_ids.join(",")}:#{target}:#{field}:#{Theme.compiler_version}"
+    cache_key_part_experimental = target == :extra_js && SiteSetting.enable_experimental_javascript_defer ? ':defer' : ''
+    cache_key = "#{theme_ids.join(",")}:#{target}:#{field}:#{Theme.compiler_version}#{cache_key_part_experimental}"
     lookup = @cache[cache_key]
     return lookup.html_safe if lookup
 
@@ -389,7 +390,8 @@ class Theme < ActiveRecord::Base
       end
       caches = JavascriptCache.where(theme_id: theme_ids)
       caches = caches.sort_by { |cache| theme_ids.index(cache.theme_id) }
-      return caches.map { |c| "<script src='#{c.url}'></script>" }.join("\n")
+      defer_attribute = SiteSetting.enable_experimental_javascript_defer ? ' defer' : ''
+      return caches.map { |c| "<script#{defer_attribute} src='#{c.url}'></script>" }.join("\n")
     end
     list_baked_fields(theme_ids, target, name).map { |f| f.value_baked || f.value }.join("\n")
   end

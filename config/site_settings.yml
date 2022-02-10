@@ -1944,6 +1944,10 @@ developer:
   enable_safe_mode:
     default: true
     client: true
+  enable_experimental_static_topic_content:
+    default: false
+  enable_experimental_javascript_defer:
+    default: false
 
 embedding:
   embed_by_username:

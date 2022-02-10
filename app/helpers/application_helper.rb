@@ -135,15 +135,16 @@ module ApplicationHelper
     path
   end
 
-  def preload_script(script)
+  def preload_script(script, defer = true)
     path = script_asset_path(script)
-    preload_script_url(path)
+    preload_script_url(path, defer)
   end
 
-  def preload_script_url(url)
+  def preload_script_url(url, defer = true)
+    defer_attribute = (SiteSetting.enable_experimental_javascript_defer && defer) ? ' defer' : ''
     <<~HTML.html_safe
       <link rel="preload" href="#{url}" as="script">
-      <script src="#{url}"></script>
+      <script#{defer_attribute} src="#{url}"></script>
     HTML
   end
 
@@ -164,6 +165,7 @@ module ApplicationHelper
     list << 'rtl' if rtl?
     list << text_size_class
     list << 'anon' unless current_user
+    list << 'experimental-static-topic-content' if SiteSetting.enable_experimental_static_topic_content
     list.join(' ')
   end
 
